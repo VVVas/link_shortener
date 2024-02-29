@@ -1,21 +1,20 @@
-from random import choice, shuffle
+from random import choice
 
 from flask import abort, flash, redirect, render_template, url_for
 
 from . import app, db
 from .forms import URLMapForm
 from .models import URLMap
+from .constants import SHORT_ID_LENGHT, SYMBOLS
 
 
-# def get_unique_short_id(lenght=app.config['SHORT_ID_LENGHT']):
-#     symbols = shuffle(list(app.config['SYMBOLS']))
-#     print(''.join([choice(symbols) for x in range(lenght)]))
-#     return ''.join([choice(symbols) for x in range(lenght)])
-
-def get_unique_short_id(lenght=6):
-    symbols = list('1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM')
-    # print(''.join([choice(symbols) for x in range(lenght)]))
-    return (''.join([choice(symbols) for x in range(lenght)]))
+def get_unique_short_id():
+    short_id = ''
+    while URLMap.query.filter_by(short=short_id).first() or short_id == '':
+        print(short_id)
+        short_id = (''.join([choice(SYMBOLS) for x in range(SHORT_ID_LENGHT)]))
+        print(short_id)
+    return short_id
 
 
 # def random_opinion():
@@ -34,11 +33,11 @@ def index_view():
         #     flash('Такое мнение уже было оставлено ранее!')
         #     return render_template('add_opinion.html', form=form)
         custom_id = form.custom_id.data
-        custom_id = get_unique_short_id()
-        print(custom_id)
+        # custom_id = get_unique_short_id()
+        # print(custom_id)
         if not custom_id:
-            while URLMap.query.filter_by(short=custom_id).first():
-                custom_id = get_unique_short_id()
+            # while URLMap.query.filter_by(short=custom_id).first():
+            custom_id = get_unique_short_id()
         # if URLMap.query.filter_by(short=custom_id).first():
         #     flash('Предложенный вариант короткой ссылки уже существует.')
         #     return render_template('index.html', form=form)
