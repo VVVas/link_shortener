@@ -1,6 +1,6 @@
 """Константы."""
-from string import ascii_lowercase, ascii_uppercase, digits
+from string import ascii_letters, digits
 
 SHORT_ID_LENGHT = 6
-SYMBOLS = digits + ascii_lowercase
-SYMBOLS_INPUT = SYMBOLS + ascii_uppercase
+SHORT_ID_SYMBOLS = ascii_letters + digits
+CUSTOM_ID_PATTERN = r'^[A-Za-z0-9]+$'

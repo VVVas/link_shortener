@@ -52,7 +52,17 @@
         <div class="col-sm">
           <p class="text-center">
           <h5 class="text-center">
-            {% with messages = get_flashed_messages() %}
+            {% with messages = get_flashed_messages(category_filter=["url"]) %}
+              {% if messages %}
+                {% for message in messages %}
+                  Ваша новая ссылка готова<br>
+                  <a href="{{ message }}">
+                    {{ message }}
+                  </a>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            {% with messages = get_flashed_messages(category_filter=["duplicate"]) %}
               {% if messages %}
                 {% for message in messages %}
                   {{ message }}

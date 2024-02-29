@@ -3,7 +3,7 @@ from random import choice
 from flask import flash, redirect, render_template, url_for
 
 from . import app, db
-from .constants import SHORT_ID_LENGHT, SYMBOLS
+from .constants import SHORT_ID_LENGHT, SHORT_ID_SYMBOLS
 from .forms import URLMapForm
 from .models import URLMap
 
@@ -11,7 +11,7 @@ from .models import URLMap
 def get_unique_short_id():
     short_id = ''
     while URLMap.query.filter_by(short=short_id).first() or not short_id:
-        short_id = (''.join([choice(SYMBOLS) for x in range(SHORT_ID_LENGHT)]))
+        short_id = (''.join([choice(SHORT_ID_SYMBOLS) for x in range(SHORT_ID_LENGHT)]))
     return short_id
 
 
@@ -19,11 +19,11 @@ def get_unique_short_id():
 def index_view():
     form = URLMapForm()
     if form.validate_on_submit():
-        custom_id = form.custom_id.data.lower()
+        custom_id = form.custom_id.data
         if not custom_id:
             custom_id = get_unique_short_id()
         elif URLMap.query.filter_by(short=custom_id).first():
-            flash('Предложенный вариант короткой ссылки уже существует.')
+            flash('Предложенный вариант короткой ссылки уже существует.', 'duplicate')
             return render_template('index.html', form=form)
         urlmap = URLMap(
             original=form.original_link.data,
@@ -32,7 +32,7 @@ def index_view():
         db.session.add(urlmap)
         db.session.commit()
         short_url = url_for('redirect_view', short_id=urlmap.short, _external=True)
-        flash(f'Ваша новая ссылка готова {short_url}')
+        flash(short_url, 'url')
     return render_template('index.html', form=form)
 
 
