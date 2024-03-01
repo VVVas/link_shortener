@@ -1,3 +1,4 @@
+"""Обработка запросов к Укоротителю ссылок."""
 from random import choice
 
 from flask import flash, redirect, render_template, url_for
@@ -9,21 +10,26 @@ from .models import URLMap
 
 
 def get_unique_short_id():
+    """Получение уникальной короткой ссылки."""
     short_id = ''
     while URLMap.query.filter_by(short=short_id).first() or not short_id:
-        short_id = (''.join([choice(SHORT_ID_SYMBOLS) for x in range(SHORT_ID_LENGHT)]))
+        short_id = (''.join(
+            [choice(SHORT_ID_SYMBOLS) for x in range(SHORT_ID_LENGHT)]
+        ))
     return short_id
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index_view():
+    """Главная страница с формой создание короткой ссылки."""
     form = URLMapForm()
     if form.validate_on_submit():
         custom_id = form.custom_id.data
         if not custom_id:
             custom_id = get_unique_short_id()
         elif URLMap.query.filter_by(short=custom_id).first():
-            flash('Предложенный вариант короткой ссылки уже существует.', 'duplicate')
+            flash('Предложенный вариант короткой ссылки уже существует.',
+                  'duplicate')
             return render_template('index.html', form=form)
         urlmap = URLMap(
             original=form.original_link.data,
@@ -31,12 +37,13 @@ def index_view():
         )
         db.session.add(urlmap)
         db.session.commit()
-        short_url = url_for('redirect_view', short_id=urlmap.short, _external=True)
-        flash(short_url, 'url')
+        flash(url_for('redirect_view', short_id=urlmap.short, _external=True),
+              'url')
     return render_template('index.html', form=form)
 
 
 @app.route('/<string:short_id>')
 def redirect_view(short_id):
+    """Перенаправление из короткой ссылки и оригинальную."""
     urlmap = URLMap.query.filter_by(short=short_id).first_or_404()
     return redirect(urlmap.original)
