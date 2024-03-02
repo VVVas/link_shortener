@@ -19,7 +19,7 @@ def get_unique_short_id():
         short_id = (''.join(
             [choice(SHORT_ID_SYMBOLS) for x in range(SHORT_ID_LENGHT)]
         ))
-        if counter == SHORT_ID_ATTEMPTS_NUMBER:
+        if counter > SHORT_ID_ATTEMPTS_NUMBER:
             abort(HTTPStatus.INTERNAL_SERVER_ERROR)
         counter += 1
     return short_id
