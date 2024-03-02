@@ -1,10 +1,12 @@
 """Обработка запросов к Укоротителю ссылок."""
+from http import HTTPStatus
 from random import choice
 
-from flask import flash, redirect, render_template, url_for
+from flask import abort, flash, redirect, render_template, url_for
 
 from . import app, db
-from .constants import SHORT_ID_LENGHT, SHORT_ID_SYMBOLS
+from .constants import (SHORT_ID_ATTEMPTS_NUMBER, SHORT_ID_LENGHT,
+                        SHORT_ID_SYMBOLS)
 from .forms import URLMapForm
 from .models import URLMap
 
@@ -12,10 +14,14 @@ from .models import URLMap
 def get_unique_short_id():
     """Получение уникальной короткой ссылки."""
     short_id = ''
+    counter = 0
     while URLMap.query.filter_by(short=short_id).first() or not short_id:
         short_id = (''.join(
             [choice(SHORT_ID_SYMBOLS) for x in range(SHORT_ID_LENGHT)]
         ))
+        if counter == SHORT_ID_ATTEMPTS_NUMBER:
+            abort(HTTPStatus.INTERNAL_SERVER_ERROR)
+        counter += 1
     return short_id
 
 
