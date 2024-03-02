@@ -1,37 +1,35 @@
+# YaCut — Укоротитель ссылок.
+
 Клонировать репозиторий и перейти в него в командной строке:
 
 ```
-git clone 
-```
-
-```
+git clone  
 cd yacut
 ```
 
 Cоздать и активировать виртуальное окружение:
 
 ```
-python3 -m venv venv
+python -m venv venv  
+source venv/scripts/activate
 ```
-
-* Если у вас Linux/macOS
-
-    ```
-    source venv/bin/activate
-    ```
-
-* Если у вас windows
-
-    ```
-    source venv/scripts/activate
-    ```
 
 Установить зависимости из файла requirements.txt:
 
 ```
-python3 -m pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
+Создать и заполнить файл .env по примеру .env.example
+
+Создать таблицы в БД
+
 ```
-pip install -r requirements.txt
+flask db upgrade
+```
+
+Запустить
+
+```
+flask run
 ```
