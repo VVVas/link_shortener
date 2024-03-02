@@ -17,7 +17,7 @@ def add_urlmap():
     data = request.get_json()
     if data is None:
         raise InvalidAPIUsageError('Отсутствует тело запроса')
-    if 'url' not in data:
+    if 'url' not in data or not data['url']:
         raise InvalidAPIUsageError('"url" является обязательным полем!')
     if len(data['url']) > ORIGINAL_MAX:
         raise InvalidAPIUsageError('Указано недопустимое имя для ссылки')
