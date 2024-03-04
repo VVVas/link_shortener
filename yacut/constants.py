@@ -1,5 +1,10 @@
 """Константы Укоротителя ссылок."""
+from pathlib import Path
 from string import ascii_letters, digits
+
+BASE_DIR = Path(__file__).parent
+LOG_FORMAT = '"%(asctime)s - [%(levelname)s] - %(message)s"'
+DT_FORMAT = '%Y.%m.%d %H:%M:%S'
 
 ORIGINAL_MAX = 256
 SHORT_ID_MIN = 1

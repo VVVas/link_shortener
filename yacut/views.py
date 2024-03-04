@@ -1,4 +1,5 @@
 """Обработка запросов к Укоротителю ссылок."""
+import logging
 from http import HTTPStatus
 from random import choice
 
@@ -19,7 +20,19 @@ def get_unique_short_id():
         short_id = (''.join(
             [choice(SHORT_ID_SYMBOLS) for x in range(SHORT_ID_LENGHT)]
         ))
-        if counter > SHORT_ID_ATTEMPTS_NUMBER:
+        if counter == SHORT_ID_ATTEMPTS_NUMBER:
+            logging.error(
+                f'Число попыток генерации короткой ссылки {counter}. '
+                'Возможно осталось мало свободных коротких ссылок. ',
+                stack_info=True
+            )
+        if counter > (SHORT_ID_ATTEMPTS_NUMBER * SHORT_ID_LENGHT):
+            logging.critical(
+                f'Число попыток генерации короткой ссылки {counter}. '
+                'Возможно осталось мало свободных коротких ссылок. '
+                'Пользователь получил сообщение об ошибке 500.',
+                stack_info=True
+            )
             abort(HTTPStatus.INTERNAL_SERVER_ERROR)
         counter += 1
     return short_id
